@@ -2,14 +2,19 @@ const characterList = document.querySelector('.guides');
 const loggedOutLinks = document.querySelectorAll('.logged-out');
 const loggedInLinks = document.querySelectorAll('.logged-in');
 const accountDetails = document.querySelector('.account-details');
+const adminItems = document.querySelectorAll('.admin');
 
 const setupUI = (user) => {
   if(user){
+    if (user.admin) {
+      adminItems.forEach(item => item.style.display = 'block');
+    }
     //account info
     db.collection('user').doc(user.uid).get().then(doc => {
         const html = `
         <div>You are logged in as ${user.email}</div>
-        <div>${doc.data().bio}    
+        <div>${doc.data().bio}
+        <div class="blue-text">${user.admin ? 'Admin' : ''}</div>    
       `;
     accountDetails.innerHTML = html;
     });
@@ -17,6 +22,7 @@ const setupUI = (user) => {
     loggedOutLinks.forEach(item => item.style.display = 'none');
   }else{
     accountDetails.innerHTML = '';
+    adminItems.forEach(item => item.style.display = 'none');
     loggedInLinks.forEach(item => item.style.display = 'none');
     loggedOutLinks.forEach(item => item.style.display = 'block');
   }
@@ -31,7 +37,6 @@ const setupCharacter = (data) => {
       <li>
         <div class="collapsible-header grey lighten-4">${hero.title}</div>
         <div class="collapsible-body white"><span>${hero.content}</span></div>
-        <button id="cross" style="color:red">X</button>
       </li>
       `;
       html += li;
